@@ -1,12 +1,9 @@
 package creature;
 
 import java.net.URL;
-import java.util.ArrayList;
-
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import map.Map;
-import map.Position;
 
 public class CalabashBody extends Creature {
 	public enum COLOR {RED, ORANGE, YELLOW, GREEN, CYAN, BLUE, PURPLE}
@@ -24,6 +21,10 @@ public class CalabashBody extends Creature {
     	super.name = allName[no];
     	super.good = true;
     	super.alive = true;
+    	super.speed = 500;
+    	super.maxHp = 600;
+    	super.hp = maxHp;
+    	super.damage = 200;
     	this.color = COLOR.values()[no];
     	this.printColor = allPrintColor[no];
     	

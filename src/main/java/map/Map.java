@@ -6,13 +6,12 @@ import java.util.ArrayList;
 import creature.*;
 import formation.SingleLine;
 import formation.Yoke;
-import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
-import record.Record;
+import javafx.scene.shape.Rectangle;
 import record.RecordPlayer;
 
 public class Map {
@@ -42,9 +41,9 @@ public class Map {
 		this.root = root;
 		//String imagePath = "application/icons/garden.jpg";
 		String imagePath = "icons/garden.jpg";
-		URL loc = this.getClass().getClassLoader().getResource(imagePath);
-    	Image image = new Image(loc.toString());
-		//Image image = new Image(imagePath);
+		//URL loc = this.getClass().getClassLoader().getResource(imagePath);
+    	//Image image = new Image(loc.toString());
+		Image image = new Image(imagePath);
 		imageView = new ImageView();
 		imageView.setImage(image);
 		imageView.setFitHeight(700);
@@ -91,6 +90,7 @@ public class Map {
 	public long getRunningTime() {
 	    return System.currentTimeMillis() - this.startTime;
 	}
+	@SuppressWarnings("rawtypes")
 	public synchronized void clearMap() {
 		root.getChildren().clear();
 		threads.clear();
@@ -120,19 +120,33 @@ public class Map {
 				Creature curCre = pos[i][j].getCreature();
 				if (curCre != null) {
 				//	curCre.printCreature();
-					System.out.print('*');
+				//	System.out.print('*');
 					//UI
 					ImageView creImageView = curCre.getImageView();
 					creImageView.setX(50+j*75);
 					creImageView.setY(50+i*75);
 					root.getChildren().add(creImageView);
+					Rectangle bkHp = new Rectangle();
+					bkHp.setWidth(50);
+					bkHp.setHeight(5);
+					bkHp.setX(62.5+j*75);
+					bkHp.setY(51+i*75);
+					bkHp.setFill(Color.GRAY);
+			        root.getChildren().add(bkHp);
+			        Rectangle curHp = new Rectangle();
+			        curHp.setWidth(50*curCre.getHpRate());
+			        curHp.setHeight(5);
+			        curHp.setX(62.5+j*75);
+					curHp.setY(51+i*75);
+					curHp.setFill(Color.RED);
+					root.getChildren().add(curHp);
 				} else {
-					System.out.print('-');
+				//	System.out.print('-');
 				}
 			}
-			System.out.println();
+		//	System.out.println();
 		}	
-		System.out.println();
+	//	System.out.println();
 	}
 	
 	public void battle() {
@@ -185,7 +199,7 @@ public class Map {
 		return (!goodAlive || !badAlive);
 	}
 	
-	@SuppressWarnings("deprecation")
+	@SuppressWarnings({ "rawtypes" })
 	public void initMap() {
 		clearMap();
 		recordPlayer = new RecordPlayer(this);
@@ -227,17 +241,20 @@ public class Map {
 		changSheZhen.form(this, getBrother().getOrder(), 0, 0);
 		
 		//放置爷爷
-		getGrandpa().cheer(this, 4, 1);
+		//getGrandpa().cheer(this, 4, 1);
+		getGrandpa().move(pos[4][1]);
 		
 		//放置蝎子精
-		getScorpion().lead(this, 0, 10);
+		//getScorpion().lead(this, 0, 10);
+		getScorpion().move(pos[0][10]);
 		
 		//小喽啰排成衡轭阵
 		Yoke hengEZhen = new Yoke();
 		hengEZhen.form(this, getMinions(), 1, 11);
 		
 		//放置蛇精
-		getSnake().cheer(this, 4, 8);
+		//getSnake().cheer(this, 4, 8);
+		getSnake().move(pos[4][8]);
 
 		printMap();
 		

@@ -1,15 +1,9 @@
 package creature;
 
 import java.util.ArrayList;
-import java.util.Random;
-
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.util.Duration;
 import map.*;
 import record.Record;
 
@@ -19,12 +13,16 @@ public class Creature implements Runnable {
 	protected String name;
 	protected boolean good;
 	protected boolean alive;
+	protected int speed;
+	protected int maxHp;
+	protected int hp;
+	protected int damage;
 	protected String imagePath;
 	protected ImageView imageView;
 	@SuppressWarnings("rawtypes")
 	protected Position position;
 	public Creature() {}
-	public Creature(Map map, String imagePath, int id) {
+	public Creature(Map map, String imagePath, int maxHp, int hp, int id) {
 		this.map = map;
 		this.imagePath = imagePath;
 		Image image = new Image(imagePath);
@@ -34,6 +32,8 @@ public class Creature implements Runnable {
 		this.imageView.setFitWidth(75);
 		this.id = id;
 		this.alive = true;
+		this.maxHp = maxHp;
+		this.hp = hp;
 	}
 	//生物走到指定位置
 	@SuppressWarnings(value={"unchecked"})
@@ -45,6 +45,7 @@ public class Creature implements Runnable {
 		position = pos;
 	}
 	//自动移动并战斗
+	@SuppressWarnings("rawtypes")
 	public void autoMove() {
 		if (map.battleIsFinished()) { 
 			try {
@@ -102,11 +103,15 @@ public class Creature implements Runnable {
 				int posIndex = (int)(Math.random()*(enemyPos.size()+0));
 				if (posIndex >= enemyPos.size()) { posIndex -= enemyPos.size();}
 				Position battlePos =  enemyPos.get(posIndex);
+		/*		//概率阵亡
 				if ((int)(Math.random()*2) == 0) {
 					kill(map, battlePos.getCreature());
 				} else {
 					beKilled(map);
 				}
+				*/
+				//攻击
+				attackCre(battlePos.getCreature());
 			} else if (emptyPos.size() > 0) {
 				int posIndex = (int)(Math.random()*(emptyPos.size()+1));
 				if (posIndex >= emptyPos.size()) { return;}
@@ -168,7 +173,6 @@ public class Creature implements Runnable {
 
 		}
 		Platform.runLater(new Runnable() {
-		    @Override
 		    public void run() { 
 		        map.printMap();
 		    }
@@ -177,6 +181,15 @@ public class Creature implements Runnable {
 	}
 	public void printCreature() {
 		
+	}
+	public void setHp(int hp) {
+		this.hp = hp;
+	}
+	public int getMaxHp() {
+		return maxHp;
+	}
+	public int getHp() {
+		return hp;
 	}
 	public String getName() {
 		return name;
@@ -197,10 +210,32 @@ public class Creature implements Runnable {
 	public int getId() {
 		return id;
 	}
+	public double getHpRate() {
+		return hp/ (double) maxHp;
+	}
+	public int getDamage() {
+		return damage;
+	}
 	public String getImagePath() {
 		return  imagePath;
 	}
+	public void attackCre(Creature cre) {
+		hurt(map, cre);	
+		if (cre.isAlive() == true) {
+			beHurt(cre.getDamage());
+		}
+	}
+	public void beHurt(int d) {
+		this.hp -= d;
+		if (hp <= 0) {
+			this.beKilled(map);
+		}
+	}
+	public void hurt(Map map, Creature cre) {
+		cre.beHurt(damage);
+	}
 	public void beKilled(Map map) {
+		System.out.println("<" + name + ">阵亡！" );
 		this.map = map;
 		alive = false;
 		map.getPos()[position.getX()][position.getY()].removeCrearure();
@@ -216,18 +251,26 @@ public class Creature implements Runnable {
 	public void kill(Map map, Creature cre) {
 		cre.beKilled(map);
 	}
+	public void beHealed(int h) {
+		if (alive) {
+			hp += h;
+			if (hp > maxHp) {
+				hp = maxHp;
+			}
+		}
+	}
 	public void run() {
 		while (!Thread.interrupted()) {
-            if (!isAlive()) {
-            	return;
-            }
+	        if (!isAlive() || map.battleIsFinished()) {
+	        	return;
+	        }
             autoMove();
             try {
-				Thread.sleep(500);
+				Thread.sleep(this.speed + 200);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
-				System.out.println(name);
-				e.printStackTrace();
+			//	System.out.println(name);
+			//	e.printStackTrace();
 			}
 		}
 

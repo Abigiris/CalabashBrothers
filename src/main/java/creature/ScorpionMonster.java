@@ -1,12 +1,9 @@
 package creature;
 
 import java.net.URL;
-import java.util.ArrayList;
-
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import map.Map;
-import map.Position;
 
 public class ScorpionMonster extends Creature{
 	public ScorpionMonster(Map map, int id) {
@@ -15,6 +12,10 @@ public class ScorpionMonster extends Creature{
 		super.name = "蝎子精";
     	super.good = false;
     	super.alive = true;
+    	super.speed = 800;
+    	super.maxHp = 800;
+    	super.hp = maxHp;
+    	super.damage = 300;
     	//super.imagePath = "application/icons/_蝎子精.jpeg";
     	super.imagePath = "icons/_蝎子精.jpeg";
     	URL loc = this.getClass().getClassLoader().getResource(imagePath);

@@ -14,7 +14,7 @@ import javafx.scene.input.KeyEvent;
 public class Main extends Application {
 	
 	@Override
-	public void start(Stage primaryStage) {	
+	public void start(final Stage primaryStage) {	
 		try {
 			Group root = new Group();
 			Scene scene = new Scene(root,1000,700);
@@ -26,13 +26,12 @@ public class Main extends Application {
 			primaryStage.sizeToScene(); 
 			primaryStage.show(); 
 			
-			Map map = new Map(8, 12, scene, root);
+			final Map map = new Map(8, 12, scene, root);
 			map.initMap();
 			map.printMap();
 			
 			scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-				@Override
-		        public void handle(KeyEvent event) {
+				public void handle(KeyEvent event) {
 					switch (event.getCode()) {
 		            case SPACE:  
 		            	map.battle(); 
@@ -58,11 +57,6 @@ public class Main extends Application {
 		                File inFile = fileChooser.showOpenDialog(primaryStage);
 		                map.getRecordPlayer().readRecordFile(inFile);
 		                map.replay();
-		                //map.playRecord();
-		                //map.getRecordPlayer().run();
-		            /*    Timeline animation = new Timeline(new KeyFrame(Duration.millis(200), e -> map.printMap()));
-		                animation.setCycleCount(Timeline.INDEFINITE);
-		                animation.play();*/
 		                break;
 					default:
 						break;

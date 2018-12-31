@@ -36,7 +36,7 @@ public class Position <T extends Creature> {
 		try {
 			set(creature);
 		} catch (OccupyingException e) {
-			System.out.println("位置(" + x + ',' + y + ")已放置生物, <" + creature.getName() + ">无法移动到该位置！");
+		//	System.out.println("位置(" + x + ',' + y + ")已放置生物, <" + creature.getName() + ">无法移动到该位置！");
 		}
 	}
 	public synchronized void removeCrearure() {

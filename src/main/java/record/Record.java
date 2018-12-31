@@ -11,6 +11,8 @@ public class Record {
     public int posX;
     public int posY;
     public String imagePath;
+    public int maxHp;
+    public int hp;
 /*    
 */
 }

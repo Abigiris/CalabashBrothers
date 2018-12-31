@@ -72,8 +72,10 @@ public class RecordPlayer implements Runnable {
                         int id = Integer.parseInt(record.getAttributes().getNamedItem("id").getNodeValue());
                         int posX = Integer.parseInt(record.getAttributes().getNamedItem("posX").getNodeValue());
                         int posY = Integer.parseInt(record.getAttributes().getNamedItem("posY").getNodeValue());
+                        int maxHp = Integer.parseInt(record.getAttributes().getNamedItem("maxHp").getNodeValue());
+                        int hp = Integer.parseInt(record.getAttributes().getNamedItem("hp").getNodeValue());
                         String imagePath = record.getAttributes().getNamedItem("imagePath").getNodeValue();
-                        Creature creature = new Creature(map, imagePath, id);
+                        Creature creature = new Creature(map, imagePath, maxHp, hp, id);
                         addRecord(this.newCreateRecord(id, creature, posX, posY));
                         addCreature(creature);
                         break;
@@ -83,7 +85,8 @@ public class RecordPlayer implements Runnable {
                         long time = Long.parseLong(record.getAttributes().getNamedItem("time").getNodeValue());
                         int posX = Integer.parseInt(record.getAttributes().getNamedItem("posX").getNodeValue());
                         int posY = Integer.parseInt(record.getAttributes().getNamedItem("posY").getNodeValue());
-                        addRecord(this.newMoveRecord(time, id, posX, posY));
+                        int hp = Integer.parseInt(record.getAttributes().getNamedItem("hp").getNodeValue());
+                        addRecord(this.newMoveRecord(time, id, posX, posY, hp));
                         break;
                     }
                     case DIE: {
@@ -129,6 +132,8 @@ public class RecordPlayer implements Runnable {
                 recordNode.setAttribute("creature", record.creature.getName());
                 recordNode.setAttribute("posX", String.valueOf(record.posX));
                 recordNode.setAttribute("posY", String.valueOf(record.posY));
+                recordNode.setAttribute("maxHp", String.valueOf(record.maxHp));
+                recordNode.setAttribute("hp", String.valueOf(record.hp));
                 recordNode.setAttribute("imagePath", record.creature.getImagePath());
                 break;
             case MOVE:
@@ -136,6 +141,7 @@ public class RecordPlayer implements Runnable {
                 recordNode.setAttribute("id", String.valueOf(record.id));
                 recordNode.setAttribute("posX", String.valueOf(record.posX));
                 recordNode.setAttribute("posY", String.valueOf(record.posY));
+                recordNode.setAttribute("hp", String.valueOf(record.hp));
                 break;
             case DIE:
                 recordNode.setAttribute("time", String.valueOf(record.time));
@@ -176,6 +182,8 @@ public class RecordPlayer implements Runnable {
     	record.id = creature.getId();
     	record.posX = creature.getPosition().getX();
     	record.posY = creature.getPosition().getY();
+    	record.maxHp = creature.getMaxHp();
+    	record.hp = creature.getHp();
     	return record;
     }
     public Record newCreateRecord(int id, Creature creature, int posX, int posY) {
@@ -186,6 +194,8 @@ public class RecordPlayer implements Runnable {
         record.posX = posX;
         record.posY = posY;
         record.imagePath = creature.getImagePath();
+    	record.maxHp = creature.getMaxHp();
+    	record.hp = creature.getHp();
         return record;
     }
     
@@ -197,15 +207,17 @@ public class RecordPlayer implements Runnable {
     	record.id = creature.getId();
     	record.posX = creature.getPosition().getX();
     	record.posY = creature.getPosition().getY();
+    	record.hp = creature.getHp();
     	return record;
     }
-    public Record newMoveRecord(long time, int id, int posX, int posY) {
+    public Record newMoveRecord(long time, int id, int posX, int posY, int hp) {
         Record record = new Record();
         record.type = Record.RecordType.MOVE;
         record.id = id;
         record.time = time;
         record.posX = posX;
         record.posY = posY;
+        record.hp = hp;
         return record;
     }
     
@@ -230,7 +242,6 @@ public class RecordPlayer implements Runnable {
 
 	}
 
-	@Override
 	public void run() {
 		// TODO Auto-generated method stub
 
@@ -242,7 +253,6 @@ public class RecordPlayer implements Runnable {
 			creatures.get(i).move(map.getPos()[posX][posY]);
 		}
 		Platform.runLater(new Runnable() {
-		    @Override
 		    public void run() { 
 		        map.printMap();
 		    }
@@ -260,11 +270,11 @@ public class RecordPlayer implements Runnable {
 						//找到生物
 						if (creatures.get(j).getId() == rcd.id) {
 							creatures.get(j).move(map.getPos()[rcd.posX][rcd.posY]);
+							creatures.get(j).setHp(rcd.hp);
 							System.out.println(map.getPos()[rcd.posX][rcd.posY].getCreature().getId());
 							i++;
 							System.out.println("move");
 							Platform.runLater(new Runnable() {
-							    @Override
 							    public void run() { 
 							        map.printMap();
 							    }
@@ -291,7 +301,6 @@ public class RecordPlayer implements Runnable {
 							i++;
 							System.out.println("die");
 							Platform.runLater(new Runnable() {
-							    @Override
 							    public void run() { 
 							        map.printMap();
 							    }

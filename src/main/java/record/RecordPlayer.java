@@ -51,6 +51,7 @@ public class RecordPlayer implements Runnable {
 	public synchronized void addCreature(Creature creature) {
 		creatures.add(creature);
 	}
+	@SuppressWarnings("unused")
 	public void readRecordFile(File inFile) {
         records.clear();
         String fileName = inFile.getAbsolutePath();

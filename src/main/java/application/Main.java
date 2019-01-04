@@ -18,7 +18,7 @@ public class Main extends Application {
 		try {
 			Group root = new Group();
 			Scene scene = new Scene(root,1000,700);
-			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+		//	scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setTitle("ImageView");
 			primaryStage.setWidth(1000);
 			primaryStage.setHeight(700);

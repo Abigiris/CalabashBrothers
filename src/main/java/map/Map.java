@@ -14,6 +14,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import record.RecordPlayer;
 
+@SuppressWarnings("unused")
 public class Map {
 	public ImageView imageView;
 	private int row, col;               //大小
@@ -41,9 +42,9 @@ public class Map {
 		this.root = root;
 		//String imagePath = "application/icons/garden.jpg";
 		String imagePath = "icons/garden.jpg";
-		//URL loc = this.getClass().getClassLoader().getResource(imagePath);
-    	//Image image = new Image(loc.toString());
-		Image image = new Image(imagePath);
+		URL loc = this.getClass().getClassLoader().getResource(imagePath);
+    	Image image = new Image(loc.toString());
+	//	Image image = new Image(imagePath);
 		imageView = new ImageView();
 		imageView.setImage(image);
 		imageView.setFitHeight(700);
